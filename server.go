@@ -6,9 +6,12 @@ import (
 	"os"
 	"net/http"
 	"fmt" 
-	
+
 	"io/ioutil"
 
+	"github.com/HendricksK/sacosbeingestgo/ingest/sacos"
+	"github.com/HendricksK/sacosbeingestgo/ingest/githubimages"
+	
 	"github.com/labstack/echo/v4"
 )
 
