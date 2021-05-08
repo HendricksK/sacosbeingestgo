@@ -8,11 +8,11 @@ import (
 	"fmt" 
 
 	"io/ioutil"
+	sacos "github.com/HendricksK/sacosbeingestgo/ingest/sacos"
+	// "github.com/HendricksK/sacosbeingestgo/ingest/githubimages"
 
-	"github.com/HendricksK/sacosbeingestgo/ingest/sacos"
-	"github.com/HendricksK/sacosbeingestgo/ingest/githubimages"
-	
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func GetApiCalls(c echo.Context) error {
@@ -25,6 +25,19 @@ func GetApiCalls(c echo.Context) error {
     return c.HTML(http.StatusOK, text)
 }
 
+func IngestSacosData(c echo.Context) error {
+
+	s := new(sacos.Sacos)
+	// https://echo.labstack.com/guide/request/
+	if err := c.Bind(s); err != nil {
+		log.Fatal(err)
+	}
+	
+	sacos.Ingest(s)
+
+	return c.JSON(http.StatusCreated, s)
+}
+
 /**
 * Main function call init echo server
 * Create our API calls as well
@@ -34,6 +47,9 @@ func main() {
 
 	// Echo init
 	e := echo.New()
+	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
+	  Level: 5,
+	}))
 	// e.Use(middleware.Logger())
 	// e.Use(middleware.Recover())
 	// https://echo.labstack.com/cookbook/cors/#server-using-a-custom-function-to-allow-origins
@@ -66,6 +82,7 @@ func main() {
 	
 	// Here lies API calls
 	e.GET("/", GetApiCalls)
+	e.POST("/ingest", IngestSacosData)
 	// Here ends API calls
 
 	// Port setup for echo webserver
