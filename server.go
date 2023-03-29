@@ -9,7 +9,7 @@ import (
 
 	"io/ioutil"
 	sacos "github.com/HendricksK/sacosbeingestgo/ingest/sacos"
-	// "github.com/HendricksK/sacosbeingestgo/ingest/githubimages"
+	image "github.com/HendricksK/sacosbeingestgo/ingest/githubimages"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -36,6 +36,25 @@ func IngestSacosData(c echo.Context) error {
 	sacos.Ingest(s)
 
 	return c.JSON(http.StatusCreated, s)
+}
+
+func PushToGit(c echo.Context) error {
+	var list []string
+	
+	list = append(list, "/storage/images/1.png")
+	list = append(list, "/storage/images/2.png")
+
+	image.Push(list)
+
+	return c.JSON(http.StatusOK, "chicken nuggies")
+}
+
+
+func PushToGitTest(c echo.Context) error {
+
+	image.PushTest()
+
+	return c.JSON(http.StatusOK, "chicken nuggies")
 }
 
 /**
@@ -83,6 +102,9 @@ func main() {
 	// Here lies API calls
 	e.GET("/", GetApiCalls)
 	e.POST("/ingest", IngestSacosData)
+	e.GET("/push", PushToGit)
+	// TEST end points, I am lazy
+	e.GET("/push-test", PushToGitTest)
 	// Here ends API calls
 
 	// Port setup for echo webserver
