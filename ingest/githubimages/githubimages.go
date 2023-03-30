@@ -4,8 +4,12 @@ import (
 	"fmt"
 	"context"
 	"os"
+	"net/http"
+	"io/ioutil"
 
-	github "github.com/google/go-github/github"
+	// github "github.com/google/go-github/github"
+
+	github "github.com/google/go-github/v50/github"
 )
 
 type Image struct {
@@ -66,9 +70,9 @@ func PushTest() bool {
 	// Note: the file needs to be absent from the repository as you are not
 	// specifying a SHA reference here.
 	opts := &github.RepositoryContentFileOptions{
-		Message:   github.String("uploaded - test"),
+		Message:   github.String("test"),
 		Content:   fileContent,
-		Branch:    github.String("test"),
+		Branch:    github.String("master"),
 		Committer: &github.CommitAuthor{Name: github.String(creds.Ghubname), Email: github.String(creds.Ghubmail)},
 	}
 
@@ -76,11 +80,45 @@ func PushTest() bool {
 
 	// for loop to get the file names then run through loop for every upload... looks like we will not be able to batch this, so will need to use queues instead. 
 	// QUEUES, this is a test for now.
-	_, _, err := client.Repositories.CreateFile(ctx, creds.Ghuborg, creds.Ghubrepo, "contents.md", opts)
+	_, _, err := client.Repositories.CreateFile(ctx, creds.Ghuborg, creds.Ghubrepo, "juicy.raw", opts)
 	if err != nil {
 		fmt.Println(err)
 		return false	
 	}
+
+	return true
+}
+
+func CurlGetGit() bool {
+
+	url := "https://api.github.com/octocat"
+
+	req, _ := http.NewRequest("GET", url, nil)
+
+	res, _ := http.DefaultClient.Do(req)
+
+	defer res.Body.Close()
+
+	body, _ := ioutil.ReadAll(res.Body)
+
+	fmt.Println(string(body))
+
+	return true
+}
+
+func CurlUploadToGit() bool {
+
+	url := "https://api.github.com/octocat"
+
+	req, _ := http.NewRequest("GET", url, nil)
+
+	res, _ := http.DefaultClient.Do(req)
+
+	defer res.Body.Close()
+
+	body, _ := ioutil.ReadAll(res.Body)
+
+	fmt.Println(string(body))
 
 	return true
 }

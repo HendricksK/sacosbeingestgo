@@ -57,6 +57,20 @@ func PushToGitTest(c echo.Context) error {
 	return c.JSON(http.StatusOK, "chicken nuggies")
 }
 
+func PushToGitCurlTest(c echo.Context) error {
+
+	image.CurlUploadToGit()
+
+	return c.JSON(http.StatusOK, "chicken nuggies")
+}
+
+func GetGitCurlTest(c echo.Context) error {
+
+	image.CurlGetGit()
+
+	return c.JSON(http.StatusOK, "chicken nuggies")
+}
+
 /**
 * Main function call init echo server
 * Create our API calls as well
@@ -105,6 +119,8 @@ func main() {
 	e.GET("/push", PushToGit)
 	// TEST end points, I am lazy
 	e.GET("/push-test", PushToGitTest)
+	e.GET("/push-curl", PushToGitCurlTest)
+	e.GET("/git-get", GetGitCurlTest)
 	// Here ends API calls
 
 	// Port setup for echo webserver
